@@ -1,7 +1,9 @@
 from typing import TypedDict
 import os
 import json
+from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langgraph.graph import StateGraph, START, END
 
 
 
@@ -26,7 +28,7 @@ class NagrikState(TypedDict):
 
     # 1. Initialize the Brain (Gemini 1.5 Pro)
 # We set temperature to 0.2 so it acts like a strict data extractor, not a creative writer.
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.2)
+llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", temperature=0.2) | StrOutputParser()
 
 # 2. Define the First Agent: Ingestion Node
 def node_ingestion(state: NagrikState):
@@ -51,7 +53,7 @@ def node_ingestion(state: NagrikState):
     # Parse the response into a Python dictionary
     try:
         # Strip markdown ticks just in case Gemini tries to be helpful
-        clean_json = response.content.replace("```json", "").replace("```", "").strip()
+        clean_json = response.replace("```json", "").replace("```", "").strip()
         entities = json.loads(clean_json)
     except Exception as e:
         print(f"Parsing Error: {e}")
@@ -61,6 +63,10 @@ def node_ingestion(state: NagrikState):
     
     # LangGraph Rule: Return ONLY the exact state variables we want to overwrite
     return {"extracted_entities": entities}
+
+
+
+
 
 # 3. Define the Second Agent: Consensus Node
 def node_consensus(state: NagrikState):
@@ -85,7 +91,7 @@ def node_consensus(state: NagrikState):
         response = llm.invoke(prompt)
         return {
             "needs_clarification": True,
-            "follow_up_question": response.content.strip()
+            "follow_up_question": response.strip()
         }
     else:
         print("All core details present. Proceeding downstream...")
@@ -93,6 +99,9 @@ def node_consensus(state: NagrikState):
             "needs_clarification": False,
             "follow_up_question": ""
         }
+    
+
+
     
     # 4. Define the Third Agent: Risk Assessment Node
 def node_risk(state: NagrikState):
@@ -116,7 +125,7 @@ def node_risk(state: NagrikState):
     
     # Ping Gemini
     response = llm.invoke(prompt)
-    risk = response.content.strip()
+    risk = response.strip()
     
     # Safety fallback in case the model hallucinates extra text
     if risk not in ["High", "Medium", "Low"]:
@@ -126,6 +135,9 @@ def node_risk(state: NagrikState):
     
     # Update the global state
     return {"risk_level": risk}
+
+
+
 
 # 5. Define the Fourth Agent: Routing Node
 def node_routing(state: NagrikState):
@@ -154,12 +166,16 @@ def node_routing(state: NagrikState):
     
     # Ping Gemini
     response = llm.invoke(prompt)
-    department = response.content.strip()
+    department = response.strip()
     
     print(f"Assigned Department: {department}")
     
     # Update the global state
     return {"assigned_department": department}
+
+
+
+
 
     # 6. Define the Final Execution Agent
 def node_execution(state: NagrikState):
@@ -174,6 +190,9 @@ def node_execution(state: NagrikState):
     }
     
     print(f"Dispatching payload to {payload['department']} API Gateway...")
+
+
+
     
     # 2. Simulate the Government Portal Response for the Demo
     gov_response = {
@@ -181,6 +200,7 @@ def node_execution(state: NagrikState):
         "gov_reference_id": "NAGRIK-2026-90412",
         "sla_resolution_hours": 48 if payload['risk_level'] == "High" else 120
     }
+
     
     # 3. Print the final Hackathon Demo UI in the terminal
     print("\n==================================================")
@@ -195,3 +215,69 @@ def node_execution(state: NagrikState):
     
     # Update state with the final reference ID appended
     return {"assigned_department": f"{payload['department']} (Ref: {gov_response['gov_reference_id']})"}
+
+
+# ==========================================
+# PHASE 3: GRAPH COMPILATION (THE LOGICAL FLOW)
+# ==========================================
+
+# 1. Initialize the Graph with our State Schema
+workflow = StateGraph(NagrikState)
+
+# 2. Add all the agent nodes to the graph
+workflow.add_node("ingestion", node_ingestion)
+workflow.add_node("consensus", node_consensus)
+workflow.add_node("risk", node_risk)
+workflow.add_node("routing", node_routing)
+workflow.add_node("execution", node_execution)
+
+# 3. Define the routing logic for the Consensus Agent
+def check_consensus(state: NagrikState):
+    # If the AI says we need more info, stop the pipeline
+    if state.get("needs_clarification"):
+        return "ask_user"
+    # Otherwise, keep going to the Risk Agent
+    return "proceed"
+
+# 4. Wire the edges (The Flow)
+workflow.add_edge(START, "ingestion")
+workflow.add_edge("ingestion", "consensus")
+
+# Add the conditional junction
+workflow.add_conditional_edges(
+    "consensus",
+    check_consensus,
+    {
+        "ask_user": END,      # Stop and return the follow-up question
+        "proceed": "risk"     # Move to Risk Assessment
+    }
+)
+
+# Wire the rest of the linear path
+workflow.add_edge("risk", "routing")
+workflow.add_edge("routing", "execution")
+workflow.add_edge("execution", END)
+
+# 5. Compile the engine
+app = workflow.compile()
+
+
+# ==========================================
+# PHASE 4: THE LIVE HACKATHON DEMO EXECUTION
+# ==========================================
+if __name__ == "__main__":
+    print("🚀 LAUNCHING NAGRIK AI BACKEND...")
+    
+    # This simulates what the React frontend will eventually send to this Python script
+    test_complaint = {
+        "original_input": "bhai sector 16 ke paas main road pe bohot bada gadha ho gaya hai, accident ho rahe hain kal se",
+        "translated_english": "There is a very large pothole on the main road near Sector 16, accidents have been happening since yesterday."
+    }
+    
+    # Run the graphs
+    final_state = app.invoke(test_complaint)
+    
+    # Handle the output if the AI decided to stop and ask for clarification
+    if final_state.get("needs_clarification"):
+        print("\n⚠️ SYSTEM HALTED: Missing Information")
+        print(f"AI Follow-up Question: {final_state.get('follow_up_question')}")
