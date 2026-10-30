@@ -93,3 +93,36 @@ def node_consensus(state: NagrikState):
             "needs_clarification": False,
             "follow_up_question": ""
         }
+    
+    # 4. Define the Third Agent: Risk Assessment Node
+def node_risk(state: NagrikState):
+    print("\n--- [NODE: RISK ASSESSMENT ACTIVATED] ---")
+    
+    # Grab the specific issue from the state memory
+    issue = state.get("extracted_entities", {}).get("Issue", "UNKNOWN")
+    
+    # Strict prompt forcing a single-word classification
+    prompt = f"""
+    You are the Risk Assessment Agent for NagrikAI.
+    Evaluate the severity of this citizen issue: "{issue}"
+    Classify it strictly into one of three categories: "High", "Medium", or "Low".
+    
+    - High: Imminent danger to life/property (e.g., open live wires, major water pipe bursts).
+    - Medium: Significant inconvenience (e.g., deep potholes, sustained power cuts).
+    - Low: Minor issues (e.g., non-functioning streetlights, daily garbage accumulation).
+    
+    Return ONLY the single word: High, Medium, or Low. Do not include punctuation.
+    """
+    
+    # Ping Gemini
+    response = llm.invoke(prompt)
+    risk = response.content.strip()
+    
+    # Safety fallback in case the model hallucinates extra text
+    if risk not in ["High", "Medium", "Low"]:
+        risk = "Medium"
+        
+    print(f"Assessed Risk Level: {risk}")
+    
+    # Update the global state
+    return {"risk_level": risk}
