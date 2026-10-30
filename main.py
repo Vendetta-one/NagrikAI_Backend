@@ -62,3 +62,34 @@ def node_ingestion(state: NagrikState):
     # LangGraph Rule: Return ONLY the exact state variables we want to overwrite
     return {"extracted_entities": entities}
 
+# 3. Define the Second Agent: Consensus Node
+def node_consensus(state: NagrikState):
+    print("\n--- [NODE: CONSENSUS ACTIVATED] ---")
+    
+    entities = state.get("extracted_entities", {})
+    location = entities.get("Location", "UNKNOWN")
+    issue = entities.get("Issue", "UNKNOWN")
+    
+    # Check if core details are missing
+    if location == "UNKNOWN" or issue == "UNKNOWN":
+        print("Missing critical information! Triggering clarification flow...")
+        
+        prompt = f"""
+        You are the Consensus Agent for NagrikAI. 
+        A citizen reported an issue, but critical details are missing.
+        Current details extracted: {entities}
+        Generate ONE polite, concise follow-up question asking ONLY for the missing detail(s).
+        Keep it under 20 words and do not ask for redundant information.
+        """
+        
+        response = llm.invoke(prompt)
+        return {
+            "needs_clarification": True,
+            "follow_up_question": response.content.strip()
+        }
+    else:
+        print("All core details present. Proceeding downstream...")
+        return {
+            "needs_clarification": False,
+            "follow_up_question": ""
+        }
