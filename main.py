@@ -160,3 +160,38 @@ def node_routing(state: NagrikState):
     
     # Update the global state
     return {"assigned_department": department}
+
+    # 6. Define the Final Execution Agent
+def node_execution(state: NagrikState):
+    print("\n--- [NODE: EXECUTION ACTIVATED] ---")
+    
+    # 1. Gather the finalized data from the state
+    payload = {
+        "location": state.get("extracted_entities", {}).get("Location", "UNKNOWN"),
+        "issue": state.get("extracted_entities", {}).get("Issue", "UNKNOWN"),
+        "risk_level": state.get("risk_level", "UNKNOWN"),
+        "department": state.get("assigned_department", "UNKNOWN")
+    }
+    
+    print(f"Dispatching payload to {payload['department']} API Gateway...")
+    
+    # 2. Simulate the Government Portal Response for the Demo
+    gov_response = {
+        "status": "FILED_SUCCESSFULLY",
+        "gov_reference_id": "NAGRIK-2026-90412",
+        "sla_resolution_hours": 48 if payload['risk_level'] == "High" else 120
+    }
+    
+    # 3. Print the final Hackathon Demo UI in the terminal
+    print("\n==================================================")
+    print("✅ OFFICIAL TICKET SUCCESSFULLY CREATED")
+    print("==================================================")
+    print(f"Reference ID : {gov_response['gov_reference_id']}")
+    print(f"Department   : {payload['department']}")
+    print(f"Risk Level   : {payload['risk_level']} (SLA: {gov_response['sla_resolution_hours']} Hours)")
+    print(f"Location     : {payload['location']}")
+    print(f"Issue        : {payload['issue']}")
+    print("==================================================\n")
+    
+    # Update state with the final reference ID appended
+    return {"assigned_department": f"{payload['department']} (Ref: {gov_response['gov_reference_id']})"}
