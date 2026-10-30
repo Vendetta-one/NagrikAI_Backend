@@ -126,3 +126,37 @@ def node_risk(state: NagrikState):
     
     # Update the global state
     return {"risk_level": risk}
+
+# 5. Define the Fourth Agent: Routing Node
+def node_routing(state: NagrikState):
+    print("\n--- [NODE: ROUTING ACTIVATED] ---")
+    
+    # Grab the issue and location from state memory
+    entities = state.get("extracted_entities", {})
+    issue = entities.get("Issue", "UNKNOWN")
+    location = entities.get("Location", "UNKNOWN")
+    
+    # Strict prompt forcing exact department matching
+    prompt = f"""
+    You are the Routing Agent for NagrikAI.
+    A citizen from "{location}" has reported this issue: "{issue}"
+    Assign this grievance strictly to the most appropriate municipal department from this list:
+    - Public Works Department (PWD)
+    - Electricity Board
+    - Jal Board (Water & Sewage)
+    - Sanitation Department
+    - Traffic Police
+    - General Municipal Administration
+    
+    Return ONLY the name of the department exactly as written in the list above. 
+    Do not include any explanation or punctuation.
+    """
+    
+    # Ping Gemini
+    response = llm.invoke(prompt)
+    department = response.content.strip()
+    
+    print(f"Assigned Department: {department}")
+    
+    # Update the global state
+    return {"assigned_department": department}
