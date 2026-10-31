@@ -1,18 +1,17 @@
 # NagrikAI 
 
-*Intelligent Civic Grievance Triage & Redressal System*[cite: 1]
-Developed by Team Catalan for the JAI Hackathon 2026[cite: 1]
+*Intelligent Civic Grievance Triage & Redressal System*
+Developed by Team Catalan for the JAI Hackathon 2026
 
-*Live Demo Public URL:* "https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s"[cite: 2]
-*Demo Screen Recording:* [Insert Video Link Here][cite: 1]
+*Live Demo Public URL:* "https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s"
 
-## Overview[cite: 1]
+## Overview
 
-NagrikAI is a highly scalable, multi-agent AI backend designed to automate the triage of municipal grievances[cite: 1]. By eliminating human bottlenecks in categorization, risk assessment, and departmental routing, NagrikAI processes unstructured, colloquial citizen complaints into standardized, actionable government tickets[cite: 1].
+NagrikAI is a highly scalable, multi-agent AI backend designed to automate the triage of municipal grievances. By eliminating human bottlenecks in categorization, risk assessment, and departmental routing, NagrikAI processes unstructured, colloquial citizen complaints into standardized, actionable government tickets.
 
-## System Architecture (Multi-Agent Pipeline)[cite: 1]
+## System Architecture (Multi-Agent Pipeline)
 
-The backend is powered by a stateless, asynchronous LangGraph StateGraph that manages a shared NagrikState across five specialized AI nodes:[cite: 1]
+The backend is powered by a stateless, asynchronous LangGraph StateGraph that manages a shared NagrikState across five specialized AI nodes:
 
 * *Node 1: Multilingual Ingestion (Agora STT)*: Captures real-time voice input from the citizen via the frontend, transcribing regional dialects and translating them into standard English.
 * *Node 2: Categorization Agent*: Analyzes the transcribed text and maps the grievance to the correct municipal domain (e.g., Infrastructure, Sanitation, Water Supply).
