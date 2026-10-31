@@ -6,6 +6,12 @@
 
 ---
 
+# 🌐 LIVE DEMO
+
+## [🚀 OPEN NAGRIKAI – LIVE PREVIEW](https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s)
+
+---
+
 ## 1. Overview
 
 NagrikAI is an AI-powered, multi-agent civic grievance management system designed to automate the classification, prioritization, and routing of municipal complaints.
@@ -278,7 +284,7 @@ For local development, the backend can be exposed through tunneling services suc
 
 **Event:** JAI Hackathon 2026
 
-**Live Demo:** [NagrikAI – Live Preview](https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s)
+**Live Demo:** [🚀 NagrikAI – Live Preview](https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s)
 
 ---
 
