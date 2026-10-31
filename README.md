@@ -1,125 +1,100 @@
-Live Demo Public URL: "https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s"
+# Citizen Connect AI
 
-# NagrikAI 🇮🇳
+Build a modern, professional, responsive web application called “NAGRIK AI” — an intelligent, multilingual, risk-aware and fault-tolerant citizen grievance resolution platform.
 
-**Intelligent Civic Grievance Triage & Redressal System**
-*Developed by Team Catalan for the JAI Hackathon 2026*
+The website is based on a research concept called:
 
-**Live Project URL:** [Insert Public URL Here]
-**Demo Screen Recording:** [Insert Video Link Here]
+“Agentic AI for Multilingual, Risk-Aware and Intelligent Citizen Grievance Resolution.”
 
----
+The main objective is to demonstrate how a multi-agent AI system can convert an informal citizen complaint — including Hindi, English, Hinglish, regional language, voice, image or document input — into a verified, risk-prioritized, explainable and correctly routed grievance.
 
-## Overview
+The system should NOT look like a generic chatbot. It should look like a serious GovTech + Agentic AI research prototype, suitable for a college hackathon, research presentation and live demo.
 
-NagrikAI is a highly scalable, multi-agent AI backend designed to automate the triage of municipal grievances. By eliminating human bottlenecks in categorization, risk assessment, and departmental routing, NagrikAI processes unstructured, colloquial citizen complaints into standardized, actionable government tickets.
+1. DESIGN STYLE
 
-## System Architecture (Multi-Agent Pipeline)
+Create a premium government-tech dashboard aesthetic.
 
-The backend is powered by a stateless, asynchronous LangGraph `StateGraph` that manages a shared `NagrikState` across five specialized AI nodes:
+Use:
 
-1. **Ingestion Agent:** Parses unstructured natural language (including mixed Hindi/English) and extracts core entities (Location, Issue, Duration).
-2. **Consensus Agent:** Acts as an automated spam filter and data validator. Evaluates if the provided information is sufficient to file a ticket. If not, it halts the pipeline and generates a natural language follow-up question for the citizen.
-3. **Risk Assessment Agent:** Evaluates the severity of the extracted issue against a strict municipal rubric (High, Medium, Low) to determine Service Level Agreements (SLAs).
-4. **Routing Agent:** Dynamically maps the grievance to the correct municipal department (e.g., PWD, Jal Board, Sanitation, Traffic Police).
-5. **Vision Forensics Node (Hybrid):** Processes uploaded grievance images to detect synthetic AI-generated deepfakes and filter out fraudulent claims.
-6. **Execution Sandbox:** Simulates a webhook gateway to a government portal, generating a mock official reference ID and success receipt without altering real-world production databases.
+Clean white/light background
 
-## Tech Stack & Third-Party Disclosures
+Deep navy/blue primary color
 
-In compliance with JAI Hackathon Technical Conduct rules (Rule T6), the following third-party components, APIs, and AI assistance tools are utilized in this project:
+Subtle saffron/green accents inspired by India
 
-* **Core Frameworks:** Python, FastAPI, Pydantic, Uvicorn.
-* **AI Orchestration:** LangGraph, LangChain (`langchain-google-genai`, `langchain-anthropic`).
-* **Text Processing Pipeline:** Google Gemini (`gemini-3.5-flash`) via API for high-speed agentic routing and natural language understanding.
-* **Vision & Image Forensics:** Anthropic Claude (`claude-3-5-sonnet-latest`) for advanced image verification.
-* **Translation Services:** Bhashini API for localized Indian language processing.
-* **AI Coding Assistance:** Generative AI tools were utilized during the hackathon for architectural scaffolding, LangGraph logic debugging, and boilerplate generation.
+Modern cards with rounded corners
 
----
+Soft shadows
 
-## Local Setup & Installation
+Professional typography
 
-**1. Clone the Repository**
+Minimal gradients
 
-```bash
-git clone https://github.com/Vendetta-one/NagrikAI_Backend.git
-cd NagrikAI_Backend
+Smooth animations
 
-```
+Responsive design for desktop, tablet and mobile
 
-**2. Initialize the Virtual Environment**
+Accessible contrast
 
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+Lucide icons
 
-```
+Charts and visual workflow diagrams
 
-**3. Install Dependencies**
+Overall feeling:
 
-```bash
-pip install fastapi uvicorn pydantic langgraph langchain-google-genai langchain-anthropic
+Trustworthy + Intelligent + Government + AI + Research + Modern
 
-```
+Avoid making it look like a normal customer-support website.
 
-**4. Set Environment Variables**
-*Note: In compliance with Rule T8, API keys are never hardcoded or pushed to this repository.*
+Add subtle animated AI/network elements in appropriate places.
 
-```bash
-export GOOGLE_API_KEY="your_gemini_api_key_here"
-export ANTHROPIC_API_KEY="your_claude_api_key_here"
+2. APPLICATION STRUCTURE
 
-```
+Create these major pages:
 
-**5. Launch the FastAPI Server**
+Landing / Home
 
-```bash
-uvicorn main:api_app --reload
+Submit Grievance
 
-```
+AI Processing Center
 
-The backend will launch at `[http://127.0.0.1:8000](http://127.0.0.1:8000)`.
+Grievance Result
 
----
+Track Complaint
 
-## API Reference
+Citizen Dashboard
 
-### `POST /submit-ticket`
+Admin / Authority Dashboard
 
-Processes a raw citizen grievance and triggers the LangGraph multi-agent pipeline.
+AI Agent Monitor
 
-**Request Body (JSON):**
+Complaint Intelligence / Clustering
 
-```json
-{
-    "original_input": "bhai sector 16 ke paas main road pe bohot bada gadha ho gaya hai, accident ho rahe hain kal se",
-    "translated_english": "There is a very large pothole on the main road near Sector 16, accidents have been happening since yesterday."
-}
+Research & Methodology
 
-```
+About the Project
 
-**Successful Response (200 OK):**
+Use a top navigation bar:
 
-```json
-{
-    "status": "success",
-    "department": "Public Works Department (PWD) (Ref: NAGRIK-2026-90412)",
-    "risk_level": "Medium",
-    "entities": {
-        "Location": "main road near Sector 16",
-        "Issue": "very large pothole"
-    }
-}
+JanSahayak AI
 
-```
+This project was built with [Lovable](https://lovable.dev).
 
-**Clarification Response (If AI requires more information):**
+## Build with Lovable
 
-```json
-{
-    "status": "needs_info",
-    "follow_up": "Could you please specify the exact landmark near Sector 16?"
-}
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/a32e7e81-29e7-57c9-9084-df602a508480).
 
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
 ```
