@@ -1,100 +1,62 @@
-# Citizen Connect AI
+# NagrikAI 
 
-Build a modern, professional, responsive web application called “NAGRIK AI” — an intelligent, multilingual, risk-aware and fault-tolerant citizen grievance resolution platform.
+*Intelligent Civic Grievance Triage & Redressal System*[cite: 1]
+Developed by Team Catalan for the JAI Hackathon 2026[cite: 1]
 
-The website is based on a research concept called:
+*Live Demo Public URL:* "https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s"[cite: 2]
+*Demo Screen Recording:* [Insert Video Link Here][cite: 1]
 
-“Agentic AI for Multilingual, Risk-Aware and Intelligent Citizen Grievance Resolution.”
+## Overview[cite: 1]
 
-The main objective is to demonstrate how a multi-agent AI system can convert an informal citizen complaint — including Hindi, English, Hinglish, regional language, voice, image or document input — into a verified, risk-prioritized, explainable and correctly routed grievance.
+NagrikAI is a highly scalable, multi-agent AI backend designed to automate the triage of municipal grievances[cite: 1]. By eliminating human bottlenecks in categorization, risk assessment, and departmental routing, NagrikAI processes unstructured, colloquial citizen complaints into standardized, actionable government tickets[cite: 1].
 
-The system should NOT look like a generic chatbot. It should look like a serious GovTech + Agentic AI research prototype, suitable for a college hackathon, research presentation and live demo.
+## System Architecture (Multi-Agent Pipeline)[cite: 1]
 
-1. DESIGN STYLE
+The backend is powered by a stateless, asynchronous LangGraph StateGraph that manages a shared NagrikState across five specialized AI nodes:[cite: 1]
 
-Create a premium government-tech dashboard aesthetic.
+* *Node 1: Multilingual Ingestion (Agora STT)*: Captures real-time voice input from the citizen via the frontend, transcribing regional dialects and translating them into standard English.
+* *Node 2: Categorization Agent*: Analyzes the transcribed text and maps the grievance to the correct municipal domain (e.g., Infrastructure, Sanitation, Water Supply).
+* *Node 3: Risk & Urgency Assessor*: Evaluates the severity of the issue based on context (e.g., a massive pothole causing accidents vs. a flickering streetlight) and assigns a priority tier.
+* *Node 4: Department Routing*: Determines the precise government or municipal department responsible for execution.
+* *Node 5: Ticket Generation*: Compiles the processed data into an official ticket ready for rendering on the civic dashboard.
 
-Use:
+## Tech Stack
 
-Clean white/light background
+* *Frontend Environment*: React / Lovable 
+* *Voice Integration*: Agora Voice SDK / Web Speech API
+* *Backend Framework*: Python, FastAPI, Uvicorn
+* *AI Orchestration*: LangGraph, LangChain
+* *Tunneling / Connectivity*: localtunnel / ngrok
 
-Deep navy/blue primary color
+## API Reference
 
-Subtle saffron/green accents inspired by India
+### Submit a Citizen Grievance
+```http
+POST /submit-ticket
 
-Modern cards with rounded corners
 
-Soft shadows
+REQUEST PAYLOAD
 
-Professional typography
+{
+  "original_input": "string (transcribed text from Agora)",
+  "translated_english": "string"
+}
 
-Minimal gradients
 
-Smooth animations
+SUCCESS RESPONSE
 
-Responsive design for desktop, tablet and mobile
+{
+  "status": "success",
+  "department": "Public Works Department",
+  "risk_level": "High",
+  "entities": ["Sector 16", "Main Road"]
+}
 
-Accessible contrast
 
-Lucide icons
 
-Charts and visual workflow diagrams
+MISSING INFORMATION/FOLLOW-UP RESPONSE
 
-Overall feeling:
-
-Trustworthy + Intelligent + Government + AI + Research + Modern
-
-Avoid making it look like a normal customer-support website.
-
-Add subtle animated AI/network elements in appropriate places.
-
-2. APPLICATION STRUCTURE
-
-Create these major pages:
-
-Landing / Home
-
-Submit Grievance
-
-AI Processing Center
-
-Grievance Result
-
-Track Complaint
-
-Citizen Dashboard
-
-Admin / Authority Dashboard
-
-AI Agent Monitor
-
-Complaint Intelligence / Clustering
-
-Research & Methodology
-
-About the Project
-
-Use a top navigation bar:
-
-JanSahayak AI
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/a32e7e81-29e7-57c9-9084-df602a508480).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+{
+  "status": "needs_info",
+  "follow_up": "AI generated follow-up question asking the citizen for clarification (e.g., exact landmark)."
+}
