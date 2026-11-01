@@ -1,125 +1,291 @@
-Live Demo Public URL: "https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s"
+# NagrikAI – Backend
 
-# NagrikAI 🇮🇳
+### Intelligent Civic Grievance Triage & Redressal System
 
-**Intelligent Civic Grievance Triage & Redressal System**
-*Developed by Team Catalan for the JAI Hackathon 2026*
-
-**Live Project URL:** [Insert Public URL Here]
-**Demo Screen Recording:** [Insert Video Link Here]
+**Developed by Team Catalan | JAI Hackathon 2026**
 
 ---
 
-## Overview
+# 🌐 LIVE DEMO
 
-NagrikAI is a highly scalable, multi-agent AI backend designed to automate the triage of municipal grievances. By eliminating human bottlenecks in categorization, risk assessment, and departmental routing, NagrikAI processes unstructured, colloquial citizen complaints into standardized, actionable government tickets.
-
-## System Architecture (Multi-Agent Pipeline)
-
-The backend is powered by a stateless, asynchronous LangGraph `StateGraph` that manages a shared `NagrikState` across five specialized AI nodes:
-
-1. **Ingestion Agent:** Parses unstructured natural language (including mixed Hindi/English) and extracts core entities (Location, Issue, Duration).
-2. **Consensus Agent:** Acts as an automated spam filter and data validator. Evaluates if the provided information is sufficient to file a ticket. If not, it halts the pipeline and generates a natural language follow-up question for the citizen.
-3. **Risk Assessment Agent:** Evaluates the severity of the extracted issue against a strict municipal rubric (High, Medium, Low) to determine Service Level Agreements (SLAs).
-4. **Routing Agent:** Dynamically maps the grievance to the correct municipal department (e.g., PWD, Jal Board, Sanitation, Traffic Police).
-5. **Vision Forensics Node (Hybrid):** Processes uploaded grievance images to detect synthetic AI-generated deepfakes and filter out fraudulent claims.
-6. **Execution Sandbox:** Simulates a webhook gateway to a government portal, generating a mock official reference ID and success receipt without altering real-world production databases.
-
-## Tech Stack & Third-Party Disclosures
-
-In compliance with JAI Hackathon Technical Conduct rules (Rule T6), the following third-party components, APIs, and AI assistance tools are utilized in this project:
-
-* **Core Frameworks:** Python, FastAPI, Pydantic, Uvicorn.
-* **AI Orchestration:** LangGraph, LangChain (`langchain-google-genai`, `langchain-anthropic`).
-* **Text Processing Pipeline:** Google Gemini (`gemini-3.5-flash`) via API for high-speed agentic routing and natural language understanding.
-* **Vision & Image Forensics:** Anthropic Claude (`claude-3-5-sonnet-latest`) for advanced image verification.
-* **Translation Services:** Bhashini API for localized Indian language processing.
-* **AI Coding Assistance:** Generative AI tools were utilized during the hackathon for architectural scaffolding, LangGraph logic debugging, and boilerplate generation.
+## [🚀 OPEN NAGRIKAI – LIVE PREVIEW](https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s)
 
 ---
 
-## Local Setup & Installation
+## 1. Overview
 
-**1. Clone the Repository**
+NagrikAI is an AI-powered, multi-agent civic grievance management system designed to automate the classification, prioritization, and routing of municipal complaints.
 
-```bash
-git clone https://github.com/Vendetta-one/NagrikAI_Backend.git
-cd NagrikAI_Backend
+The backend transforms unstructured citizen complaints, including multilingual and colloquial inputs, into structured, actionable grievance tickets.
 
+Powered by **Python, FastAPI, LangChain, and LangGraph**, the system uses a specialized multi-agent pipeline to minimize manual intervention, improve grievance handling efficiency, and ensure that complaints reach the appropriate government departments.
+
+## 2. System Architecture
+
+The backend follows a modular, asynchronous AI processing pipeline orchestrated through **LangGraph StateGraph**.
+
+It maintains a shared `NagrikState` throughout the workflow, allowing specialized agents to process and enrich grievance information sequentially.
+
+### Multi-Agent Processing Pipeline
+
+**Agent 1 – Multilingual Ingestion**
+- Accepts citizen complaints through voice or text input.
+- Integrates Agora Voice SDK / Web Speech API for voice input.
+- Transcribes spoken complaints and translates regional-language inputs into standardized English.
+- Prepares the input for downstream AI processing.
+
+**Agent 2 – Grievance Categorization**
+- Analyzes the complaint using AI-based natural language understanding.
+- Identifies the relevant municipal domain.
+- Classifies grievances into categories such as:
+  - Infrastructure
+  - Sanitation
+  - Water Supply
+  - Electricity
+  - Public Safety
+
+**Agent 3 – Risk & Urgency Assessment**
+- Evaluates the severity and potential impact of the reported issue.
+- Identifies critical situations requiring immediate attention.
+- Assigns an appropriate priority level based on contextual analysis.
+
+**Agent 4 – Departmental Routing**
+- Determines the appropriate government or municipal department responsible for resolving the grievance.
+- Maps the classified complaint to the relevant department for further action.
+
+**Agent 5 – Intelligent Ticket Generation**
+- Consolidates the outputs generated by previous agents.
+- Generates a structured grievance ticket.
+- Prepares the processed information for display on the civic administration dashboard.
+
+### Workflow
+
+```text
+Citizen Input (Voice / Text)
+          |
+          v
+Multilingual Ingestion
+          |
+          v
+Grievance Categorization
+          |
+          v
+Risk & Urgency Assessment
+          |
+          v
+Departmental Routing
+          |
+          v
+Ticket Generation
+          |
+          v
+Civic Administration Dashboard
 ```
 
-**2. Initialize the Virtual Environment**
+If essential information is missing, the system can generate a follow-up question to obtain clarification before proceeding with ticket processing.
+
+## 3. Technology Stack
+
+| Component | Technology |
+|---|---|
+| Programming Language | Python |
+| Backend Framework | FastAPI |
+| ASGI Server | Uvicorn |
+| AI Orchestration | LangGraph |
+| LLM Framework | LangChain |
+| Voice Integration | Agora Voice SDK |
+| Browser Voice Support | Web Speech API |
+| Frontend Environment | React / Lovable |
+| Tunneling | ngrok / localtunnel |
+
+## 4. API Documentation
+
+### Submit a Citizen Grievance
+
+Processes a citizen complaint through the AI-powered grievance management pipeline.
+
+**Endpoint:** `/submit-ticket`
+
+**HTTP Method:** `POST`
+
+**Content-Type:** `application/json`
+
+#### Request Body
+
+```json
+{
+  "original_input": "string",
+  "translated_english": "string"
+}
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| original_input | String | Original transcribed citizen complaint |
+| translated_english | String | English translation of the complaint |
+
+#### Successful Response
+
+**Status:** `success`
+
+Returns the classified and processed grievance information.
+
+```json
+{
+  "status": "success",
+  "department": "Public Works Department",
+  "risk_level": "High",
+  "entities": [
+    "Sector 16",
+    "Main Road"
+  ]
+}
+```
+
+| Field | Description |
+|---|---|
+| status | Indicates successful grievance processing |
+| department | Department responsible for handling the complaint |
+| risk_level | Assessed urgency or severity of the grievance |
+| entities | Extracted locations and relevant entities |
+
+#### Follow-up Response
+
+**Status:** `needs_info`
+
+If the complaint lacks essential information, the AI system generates a clarification question.
+
+```json
+{
+  "status": "needs_info",
+  "follow_up": "Could you provide the exact location or nearest landmark?"
+}
+```
+
+| Field | Description |
+|---|---|
+| status | Indicates that additional information is required |
+| follow_up | AI-generated clarification question |
+
+## 5. Installation & Setup
+
+Follow these steps to run the backend locally.
+
+### Prerequisites
+
+Ensure that the following are installed:
+
+- Python 3.10 or later
+- pip (Python package manager)
+- Git
+
+### Step 1: Clone the Repository
+
+```bash
+git clone <repository-url>
+```
+
+### Step 2: Navigate to the Backend Directory
+
+```bash
+cd <repository-name>/backend
+```
+
+### Step 3: Create a Virtual Environment
+
+**Windows:**
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-
+venv\Scripts\activate
 ```
 
-**3. Install Dependencies**
+**Linux / macOS:**
 
 ```bash
-pip install fastapi uvicorn pydantic langgraph langchain-google-genai langchain-anthropic
-
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-**4. Set Environment Variables**
-*Note: In compliance with Rule T8, API keys are never hardcoded or pushed to this repository.*
+### Step 4: Install Dependencies
 
 ```bash
-export GOOGLE_API_KEY="your_gemini_api_key_here"
-export ANTHROPIC_API_KEY="your_claude_api_key_here"
-
+pip install -r requirements.txt
 ```
 
-**5. Launch the FastAPI Server**
+### Step 5: Configure Environment Variables
+
+Create a `.env` file in the backend directory and add the required API keys and configuration values.
+
+Example:
+
+```env
+AGORA_APP_ID=your_agora_app_id
+AGORA_APP_CERTIFICATE=your_agora_certificate
+LLM_API_KEY=your_llm_api_key
+```
+
+Add only the environment variables actually required by your implementation.
+
+**Important:** Never commit API keys, credentials, or `.env` files to GitHub.
+
+### Step 6: Start the Backend Server
+
+Run the FastAPI application using Uvicorn:
 
 ```bash
-uvicorn main:api_app --reload
-
+uvicorn main:app --reload
 ```
 
-The backend will launch at `[http://127.0.0.1:8000](http://127.0.0.1:8000)`.
+Replace `main:app` if your actual application entry point uses a different filename or FastAPI instance name.
+
+The backend will typically be accessible at:
+
+```text
+http://127.0.0.1:8000
+```
+
+### Step 7: Access API Documentation
+
+FastAPI automatically provides interactive API documentation.
+
+- **Swagger UI:** `http://127.0.0.1:8000/docs`
+- **ReDoc:** `http://127.0.0.1:8000/redoc`
+
+## 6. Frontend Integration
+
+The NagrikAI backend communicates with the React-based frontend through RESTful APIs.
+
+The integration enables:
+
+- Submission of citizen grievances.
+- Processing of multilingual voice and text inputs.
+- Retrieval of AI-generated grievance classifications.
+- Display of risk levels and departmental assignments.
+- Collection of additional information through AI-generated follow-up questions.
+
+For local development, the backend can be exposed through tunneling services such as ngrok or localtunnel when external frontend access is required.
+
+## 7. Key Features
+
+- **Multilingual Complaint Processing:** Supports voice-based grievance ingestion and translation.
+- **AI-Powered Categorization:** Automatically identifies the relevant municipal domain.
+- **Intelligent Risk Assessment:** Evaluates complaint severity and urgency.
+- **Automated Department Routing:** Directs grievances to the appropriate department.
+- **Dynamic Follow-up Generation:** Requests clarification when essential complaint details are missing.
+- **Structured Ticket Generation:** Converts unstructured complaints into actionable civic records.
+- **Modular Multi-Agent Architecture:** Uses specialized AI agents for individual processing tasks.
+
+## 8. Project Information
+
+**Project:** NagrikAI – Intelligent Civic Grievance Triage & Redressal System
+
+**Team:** Team Catalan
+
+**Event:** JAI Hackathon 2026
+
+**Live Demo:** [🚀 NagrikAI – Live Preview](https://lovable.dev/preview/wOJ5f89Xor7wtkfb0MDVEp2NlXhG1d3s)
 
 ---
 
-## API Reference
-
-### `POST /submit-ticket`
-
-Processes a raw citizen grievance and triggers the LangGraph multi-agent pipeline.
-
-**Request Body (JSON):**
-
-```json
-{
-    "original_input": "bhai sector 16 ke paas main road pe bohot bada gadha ho gaya hai, accident ho rahe hain kal se",
-    "translated_english": "There is a very large pothole on the main road near Sector 16, accidents have been happening since yesterday."
-}
-
-```
-
-**Successful Response (200 OK):**
-
-```json
-{
-    "status": "success",
-    "department": "Public Works Department (PWD) (Ref: NAGRIK-2026-90412)",
-    "risk_level": "Medium",
-    "entities": {
-        "Location": "main road near Sector 16",
-        "Issue": "very large pothole"
-    }
-}
-
-```
-
-**Clarification Response (If AI requires more information):**
-
-```json
-{
-    "status": "needs_info",
-    "follow_up": "Could you please specify the exact landmark near Sector 16?"
-}
-
-```
+*Built with the vision of making civic grievance redressal smarter, faster, and more accessible through Artificial Intelligence.*
