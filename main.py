@@ -1,3 +1,30 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+# Initialize the waiter
+api_app = FastAPI(title="Project Catalan - NagrikAI Backend")
+
+# Configure the bouncer (CORS)
+api_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, replace "*" with your actual frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
+
+
+class GrievanceRequest(BaseModel):
+    original_input: str
+    translated_english: str
+
+
+
 from typing import TypedDict
 import os
 import json
@@ -265,19 +292,30 @@ app = workflow.compile()
 # ==========================================
 # PHASE 4: THE LIVE HACKATHON DEMO EXECUTION
 # ==========================================
-if __name__ == "__main__":
-    print("🚀 LAUNCHING NAGRIK AI BACKEND...")
+@api_app.post("/submit-ticket")
+async def process_grievance(request: GrievanceRequest):
+    print(f"\n📡 INCOMING REQUEST: {request.translated_english}")
     
-    # This simulates what the React frontend will eventually send to this Python script
-    test_complaint = {
-        "original_input": "bhai sector 16 ke paas main road pe bohot bada gadha ho gaya hai, accident ho rahe hain kal se",
-        "translated_english": "There is a very large pothole on the main road near Sector 16, accidents have been happening since yesterday."
+    # Package the validated data into the dictionary format LangGraph expects
+    initial_state = {
+        "original_input": request.original_input,
+        "translated_english": request.translated_english
     }
     
-    # Run the graphs
-    final_state = app.invoke(test_complaint)
+    # Fire off the LangGraph agents
+    # We use app.invoke() assuming 'app' is your compiled StateGraph
+    final_state = app.invoke(initial_state)
     
-    # Handle the output if the AI decided to stop and ask for clarification
+    # Return the structured JSON to the frontend
     if final_state.get("needs_clarification"):
-        print("\n⚠️ SYSTEM HALTED: Missing Information")
-        print(f"AI Follow-up Question: {final_state.get('follow_up_question')}")
+        return {
+            "status": "needs_info",
+            "follow_up": final_state.get("follow_up_question")
+        }
+    else:
+        return {
+            "status": "success",
+            "department": final_state.get("assigned_department"),
+            "risk_level": final_state.get("risk_level"),
+            "entities": final_state.get("extracted_entities")
+        }
